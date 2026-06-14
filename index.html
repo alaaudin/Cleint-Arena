@@ -3,64 +3,30 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ClientArena — Survive the client before the contract</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+    <title>Freelancer Battle Arena — Client Survival Simulator</title>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     <style>
         :root {
-            --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-            --font-mono: 'JetBrains Mono', 'SF Mono', monospace;
-            
-            /* Pitch Black (Default) */
-            --bg-primary: #000000;
-            --bg-secondary: #111111;
-            --bg-tertiary: #0a0a0a;
-            --text-primary: #ffffff;
-            --text-secondary: #888888;
-            --text-muted: #555555;
-            --border-subtle: rgba(255, 255, 255, 0.05);
-            --border-hover: rgba(255, 255, 255, 0.15);
-            --accent: #ffffff;
-            --accent-glow: rgba(255, 255, 255, 0.08);
-            --card-bg: rgba(17, 17, 17, 0.6);
-            --shadow: rgba(0, 0, 0, 0.4);
-            --timeline: rgba(255, 255, 255, 0.08);
-            --glow-color: rgba(255, 255, 255, 0.03);
-        }
-
-        [data-theme="nordic"] {
-            --bg-primary: #F5F5F7;
-            --bg-secondary: #ffffff;
-            --bg-tertiary: #eeeeee;
-            --text-primary: #1a1a1a;
-            --text-secondary: #6e6e73;
-            --text-muted: #a1a1a6;
-            --border-subtle: rgba(0, 0, 0, 0.06);
-            --border-hover: rgba(0, 0, 0, 0.15);
-            --accent: #1a1a1a;
-            --accent-glow: rgba(0, 0, 0, 0.04);
-            --card-bg: rgba(255, 255, 255, 0.7);
-            --shadow: rgba(0, 0, 0, 0.08);
-            --timeline: rgba(0, 0, 0, 0.08);
-            --glow-color: rgba(0, 0, 0, 0.02);
-        }
-
-        [data-theme="tokyo"] {
-            --bg-primary: #000000;
-            --bg-secondary: #0a0a0a;
-            --bg-tertiary: #050505;
-            --text-primary: #e0e0e0;
-            --text-secondary: #6b7280;
-            --text-muted: #374151;
-            --border-subtle: rgba(34, 197, 94, 0.08);
-            --border-hover: rgba(34, 197, 94, 0.3);
-            --accent: #22c55e;
-            --accent-glow: rgba(34, 197, 94, 0.15);
-            --card-bg: rgba(10, 10, 10, 0.8);
-            --shadow: rgba(0, 0, 0, 0.5);
-            --timeline: rgba(34, 197, 94, 0.15);
-            --glow-color: rgba(34, 197, 94, 0.04);
+            --bg-primary: #0a0a0f;
+            --bg-secondary: #111118;
+            --bg-tertiary: #1a1a24;
+            --bg-card: #13131f;
+            --text-primary: #e8e8f0;
+            --text-secondary: #8a8a9a;
+            --text-muted: #5a5a6a;
+            --accent-cyan: #00d4ff;
+            --accent-green: #00ff88;
+            --accent-red: #ff3366;
+            --accent-yellow: #ffcc00;
+            --accent-purple: #a855f7;
+            --border-default: rgba(255,255,255,0.06);
+            --border-hover: rgba(255,255,255,0.12);
+            --pulse-color: rgba(255,255,255,0.3);
+            --threat-low: var(--accent-green);
+            --threat-mid: var(--accent-yellow);
+            --threat-high: var(--accent-red);
+            --font-mono: 'JetBrains Mono', monospace;
+            --font-sans: 'Inter', sans-serif;
         }
 
         * {
@@ -69,718 +35,84 @@
             box-sizing: border-box;
         }
 
-        html {
-            scroll-behavior: smooth;
-        }
-
         body {
             font-family: var(--font-sans);
-            background-color: var(--bg-primary);
+            background: var(--bg-primary);
             color: var(--text-primary);
-            line-height: 1.6;
             overflow-x: hidden;
-            transition: background-color 0.6s ease, color 0.6s ease;
-            -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: grayscale;
+            min-height: 100vh;
         }
 
-        /* Ambient Glows */
-        .ambient-glow {
-            position: fixed;
-            width: 600px;
-            height: 600px;
-            border-radius: 50%;
-            background: radial-gradient(circle, var(--glow-color) 0%, transparent 70%);
-            pointer-events: none;
-            z-index: 0;
-            filter: blur(80px);
-        }
-
-        .glow-1 { top: -200px; left: -100px; }
-        .glow-2 { bottom: -200px; right: -100px; width: 800px; height: 800px; }
-
-        /* Navigation */
-        nav {
+        /* === DYNAMIC PRESSURE BORDER === */
+        .pressure-border {
             position: fixed;
             top: 0;
             left: 0;
             right: 0;
-            z-index: 100;
-            padding: 24px 48px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            backdrop-filter: blur(20px);
-            background: rgba(var(--bg-primary), 0.7);
-            border-bottom: 0.5px solid var(--border-subtle);
-            transition: all 0.4s ease;
-        }
-
-        .logo {
-            font-family: var(--font-mono);
-            font-size: 14px;
-            font-weight: 500;
-            letter-spacing: 0.05em;
-            color: var(--text-primary);
-            text-decoration: none;
-        }
-
-        .logo span {
-            color: var(--text-muted);
-            font-weight: 300;
-        }
-
-        .nav-right {
-            display: flex;
-            align-items: center;
-            gap: 32px;
-        }
-
-        .theme-toggle {
-            display: flex;
-            gap: 4px;
-            background: var(--bg-secondary);
-            padding: 4px;
-            border-radius: 100px;
-            border: 0.5px solid var(--border-subtle);
-        }
-
-        .theme-btn {
-            width: 32px;
-            height: 32px;
-            border-radius: 50%;
-            border: none;
-            cursor: pointer;
-            background: transparent;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.4s ease;
-            position: relative;
-        }
-
-        .theme-btn:hover {
-            background: var(--border-subtle);
-        }
-
-        .theme-btn.active {
-            background: var(--border-hover);
-        }
-
-        .theme-btn[data-theme="pitch"]::after {
-            content: '';
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-            background: #000;
-            border: 1.5px solid var(--text-secondary);
-        }
-
-        .theme-btn[data-theme="nordic"]::after {
-            content: '';
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-            background: #F5F5F7;
-            border: 1.5px solid var(--text-secondary);
-        }
-
-        .theme-btn[data-theme="tokyo"]::after {
-            content: '';
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-            background: #000;
-            border: 1.5px solid #22c55e;
-            box-shadow: 0 0 8px rgba(34, 197, 94, 0.4);
-        }
-
-        /* Hero Section */
-        .hero {
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-            padding: 120px 24px 80px;
-            position: relative;
-            z-index: 1;
-        }
-
-        .hero-label {
-            font-family: var(--font-mono);
-            font-size: 11px;
-            font-weight: 400;
-            letter-spacing: 0.2em;
-            text-transform: uppercase;
-            color: var(--text-muted);
-            margin-bottom: 48px;
-            opacity: 0;
-            transform: translateY(20px);
-            animation: fadeUp 0.8s ease 0.2s forwards;
-        }
-
-        .hero h1 {
-            font-family: var(--font-sans);
-            font-size: clamp(36px, 6vw, 72px);
-            font-weight: 300;
-            line-height: 1.1;
-            letter-spacing: -0.03em;
-            color: var(--text-primary);
-            max-width: 900px;
-            margin-bottom: 32px;
-            opacity: 0;
-            transform: translateY(20px);
-            animation: fadeUp 0.8s ease 0.4s forwards;
-        }
-
-        .hero h1 em {
-            font-style: normal;
-            font-weight: 400;
-            color: var(--text-secondary);
-        }
-
-        .hero-sub {
-            font-family: var(--font-sans);
-            font-size: 16px;
-            font-weight: 400;
-            line-height: 1.7;
-            color: var(--text-secondary);
-            max-width: 560px;
-            margin-bottom: 56px;
-            opacity: 0;
-            transform: translateY(20px);
-            animation: fadeUp 0.8s ease 0.6s forwards;
-        }
-
-        .cta-pill {
-            display: inline-flex;
-            align-items: center;
-            gap: 12px;
-            padding: 16px 36px;
-            border-radius: 100px;
-            border: 0.5px solid var(--border-hover);
-            background: transparent;
-            color: var(--text-primary);
-            font-family: var(--font-sans);
-            font-size: 14px;
-            font-weight: 500;
-            letter-spacing: 0.02em;
-            text-decoration: none;
-            cursor: pointer;
-            position: relative;
-            overflow: hidden;
-            transition: all 0.4s ease;
-            opacity: 0;
-            transform: translateY(20px);
-            animation: fadeUp 0.8s ease 0.8s forwards;
-        }
-
-        .cta-pill::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 0%;
-            height: 100%;
-            background: var(--text-primary);
-            transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-            z-index: -1;
-        }
-
-        .cta-pill:hover::before {
-            width: 100%;
-        }
-
-        .cta-pill:hover {
-            color: var(--bg-primary);
-            border-color: var(--text-primary);
-        }
-
-        .cta-arrow {
-            transition: transform 0.4s ease;
-        }
-
-        .cta-pill:hover .cta-arrow {
-            transform: translateX(4px);
-        }
-
-        /* Section Styling */
-        section {
-            position: relative;
-            z-index: 1;
-            padding: 120px 24px;
-        }
-
-        .section-header {
-            max-width: 1200px;
-            margin: 0 auto 80px;
-            text-align: center;
-        }
-
-        .section-number {
-            font-family: var(--font-mono);
-            font-size: 11px;
-            font-weight: 400;
-            letter-spacing: 0.2em;
-            color: var(--text-muted);
-            margin-bottom: 24px;
-            display: block;
-        }
-
-        .section-title {
-            font-family: var(--font-sans);
-            font-size: clamp(28px, 3.5vw, 48px);
-            font-weight: 300;
-            letter-spacing: -0.02em;
-            color: var(--text-primary);
-            line-height: 1.2;
-        }
-
-        /* How It Works - Timeline */
-        .timeline {
-            max-width: 800px;
-            margin: 0 auto;
-            position: relative;
-            padding-left: 48px;
-        }
-
-        .timeline::before {
-            content: '';
-            position: absolute;
-            left: 15px;
-            top: 0;
             bottom: 0;
-            width: 0.5px;
-            background: var(--timeline);
+            pointer-events: none;
+            z-index: 9999;
+            border: 0.5px solid var(--pulse-color);
+            transition: border-color 0.8s ease, box-shadow 0.8s ease;
         }
 
-        .timeline-step {
-            position: relative;
-            margin-bottom: 96px;
-            opacity: 0;
-            transform: translateY(30px);
-            transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+        .pressure-border.threat-low {
+            --pulse-color: rgba(0, 255, 136, 0.3);
+            box-shadow: inset 0 0 30px rgba(0, 255, 136, 0.05);
+            animation: pulseBorderLow 3s ease-in-out infinite;
         }
 
-        .timeline-step.visible {
-            opacity: 1;
-            transform: translateY(0);
+        .pressure-border.threat-mid {
+            --pulse-color: rgba(255, 204, 0, 0.4);
+            box-shadow: inset 0 0 50px rgba(255, 204, 0, 0.08);
+            animation: pulseBorderMid 1.5s ease-in-out infinite;
         }
 
-        .timeline-step:last-child {
-            margin-bottom: 0;
+        .pressure-border.threat-high {
+            --pulse-color: rgba(255, 51, 102, 0.5);
+            box-shadow: inset 0 0 80px rgba(255, 51, 102, 0.12);
+            animation: pulseBorderHigh 0.8s ease-in-out infinite;
         }
 
-        .timeline-dot {
-            position: absolute;
-            left: -40px;
-            top: 4px;
-            width: 30px;
-            height: 30px;
-            border-radius: 50%;
-            border: 0.5px solid var(--border-hover);
-            background: var(--bg-primary);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-family: var(--font-mono);
-            font-size: 11px;
-            color: var(--text-secondary);
-            transition: all 0.4s ease;
+        @keyframes pulseBorderLow {
+            0%, 100% { border-color: rgba(0, 255, 136, 0.2); }
+            50% { border-color: rgba(0, 255, 136, 0.4); }
         }
 
-        .timeline-step:hover .timeline-dot {
-            border-color: var(--text-secondary);
-            color: var(--text-primary);
+        @keyframes pulseBorderMid {
+            0%, 100% { border-color: rgba(255, 204, 0, 0.3); }
+            50% { border-color: rgba(255, 204, 0, 0.6); }
         }
 
-        .timeline-content h3 {
-            font-family: var(--font-sans);
-            font-size: 24px;
-            font-weight: 400;
-            letter-spacing: -0.01em;
-            color: var(--text-primary);
-            margin-bottom: 12px;
+        @keyframes pulseBorderHigh {
+            0%, 100% { border-color: rgba(255, 51, 102, 0.4); }
+            50% { border-color: rgba(255, 51, 102, 0.8); }
         }
 
-        .timeline-content p {
-            font-family: var(--font-sans);
-            font-size: 15px;
-            font-weight: 400;
-            line-height: 1.7;
-            color: var(--text-secondary);
-            max-width: 480px;
+        /* === TYPOGRAPHY SHRINK (Claustrophobia Effect) === */
+        .chat-container {
+            transition: padding 0.6s cubic-bezier(0.4, 0, 0.2, 1), 
+                        gap 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+            padding: 24px;
+            gap: 16px;
         }
 
-        .timeline-tag {
-            display: inline-block;
-            font-family: var(--font-mono);
-            font-size: 10px;
-            font-weight: 500;
-            letter-spacing: 0.1em;
-            text-transform: uppercase;
-            color: var(--text-muted);
-            padding: 4px 10px;
-            border: 0.5px solid var(--border-subtle);
-            border-radius: 4px;
-            margin-top: 16px;
-        }
-
-        /* Interactive Preview - Chat Interface */
-        .preview-section {
-            background: var(--bg-secondary);
-            border-top: 0.5px solid var(--border-subtle);
-            border-bottom: 0.5px solid var(--border-subtle);
-        }
-
-        .chat-mockup {
-            max-width: 720px;
-            margin: 0 auto;
-            background: var(--bg-primary);
-            border: 0.5px solid var(--border-subtle);
-            border-radius: 16px;
-            overflow: hidden;
-            box-shadow: 0 20px 60px var(--shadow);
-        }
-
-        .chat-header {
-            padding: 20px 24px;
-            border-bottom: 0.5px solid var(--border-subtle);
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .chat-avatar {
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, var(--text-muted), var(--text-secondary));
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-family: var(--font-mono);
-            font-size: 12px;
-            color: var(--bg-primary);
-            font-weight: 500;
-        }
-
-        .chat-meta {
-            flex: 1;
-        }
-
-        .chat-name {
-            font-family: var(--font-sans);
-            font-size: 14px;
-            font-weight: 500;
-            color: var(--text-primary);
-        }
-
-        .chat-status {
-            font-family: var(--font-mono);
-            font-size: 10px;
-            color: var(--text-muted);
-            margin-top: 2px;
-        }
-
-        .chat-body {
-            padding: 32px 24px;
-            min-height: 320px;
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-        }
-
-        .message {
-            max-width: 80%;
-            animation: messageSlide 0.5s ease;
-        }
-
-        .message.client {
-            align-self: flex-start;
-        }
-
-        .message-bubble {
-            padding: 16px 20px;
-            border-radius: 16px;
-            font-family: var(--font-sans);
-            font-size: 14px;
-            line-height: 1.6;
-            position: relative;
-        }
-
-        .message.client .message-bubble {
-            background: var(--bg-secondary);
-            border: 0.5px solid var(--border-subtle);
-            color: var(--text-primary);
-            border-bottom-left-radius: 4px;
-        }
-
-        .message-time {
-            font-family: var(--font-mono);
-            font-size: 10px;
-            color: var(--text-muted);
-            margin-top: 6px;
-            margin-left: 4px;
-        }
-
-        .response-options {
-            margin-top: 24px;
-            display: flex;
-            flex-direction: column;
+        .chat-container.tight {
+            padding: 12px 8px;
             gap: 8px;
         }
 
-        .response-option {
-            padding: 14px 18px;
-            border: 0.5px solid var(--border-subtle);
-            border-radius: 12px;
-            background: transparent;
-            color: var(--text-secondary);
-            font-family: var(--font-sans);
-            font-size: 13px;
-            text-align: left;
-            cursor: pointer;
-            transition: all 0.4s ease;
-            position: relative;
-            overflow: hidden;
+        .chat-container.cramped {
+            padding: 6px 4px;
+            gap: 4px;
         }
 
-        .response-option:hover {
-            border-color: var(--border-hover);
-            color: var(--text-primary);
-            background: var(--bg-secondary);
-            padding-left: 24px;
-        }
-
-        .response-option::before {
-            content: '›';
-            position: absolute;
-            left: 14px;
-            opacity: 0;
-            transition: all 0.4s ease;
-            color: var(--text-primary);
-        }
-
-        .response-option:hover::before {
-            opacity: 1;
-            left: 18px;
-        }
-
-        .typing-cursor {
-            display: inline-block;
-            width: 2px;
-            height: 18px;
-            background: var(--accent);
-            margin-left: 4px;
-            vertical-align: middle;
+        /* === AUTO-TYPER CURSOR === */
+        .typing-cursor::after {
+            content: '▋';
             animation: blink 1s step-end infinite;
-        }
-
-        .chat-input {
-            padding: 16px 24px;
-            border-top: 0.5px solid var(--border-subtle);
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .input-placeholder {
-            flex: 1;
-            font-family: var(--font-sans);
-            font-size: 14px;
-            color: var(--text-muted);
-        }
-
-        .send-btn {
-            width: 32px;
-            height: 32px;
-            border-radius: 50%;
-            border: 0.5px solid var(--border-subtle);
-            background: transparent;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: all 0.4s ease;
-        }
-
-        .send-btn:hover {
-            border-color: var(--border-hover);
-            background: var(--bg-secondary);
-        }
-
-        /* Pricing */
-        .pricing-grid {
-            max-width: 720px;
-            margin: 0 auto;
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 24px;
-        }
-
-        .pricing-card {
-            padding: 40px 32px;
-            border: 0.5px solid var(--border-subtle);
-            border-radius: 16px;
-            background: var(--card-bg);
-            transition: all 0.4s ease;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .pricing-card:hover {
-            border-color: var(--border-hover);
-            transform: translateY(-4px);
-            box-shadow: 0 12px 40px var(--shadow);
-        }
-
-        .pricing-card.pro {
-            border: 0.5px solid var(--border-hover);
-            background: linear-gradient(180deg, var(--card-bg), rgba(var(--bg-primary), 0.9));
-        }
-
-        [data-theme="tokyo"] .pricing-card.pro {
-            border: 0.5px solid rgba(34, 197, 94, 0.2);
-            box-shadow: 0 0 40px rgba(34, 197, 94, 0.05);
-        }
-
-        .pricing-card.pro::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 0.5px;
-            background: linear-gradient(90deg, transparent, var(--text-secondary), transparent);
-            opacity: 0.5;
-        }
-
-        .pricing-label {
-            font-family: var(--font-mono);
-            font-size: 10px;
-            font-weight: 500;
-            letter-spacing: 0.15em;
-            text-transform: uppercase;
-            color: var(--text-muted);
-            margin-bottom: 16px;
-        }
-
-        .pricing-name {
-            font-family: var(--font-sans);
-            font-size: 28px;
-            font-weight: 300;
-            letter-spacing: -0.02em;
-            color: var(--text-primary);
-            margin-bottom: 8px;
-        }
-
-        .pricing-desc {
-            font-family: var(--font-sans);
-            font-size: 14px;
-            color: var(--text-secondary);
-            line-height: 1.6;
-            margin-bottom: 32px;
-        }
-
-        .pricing-price {
-            font-family: var(--font-mono);
-            font-size: 36px;
-            font-weight: 300;
-            color: var(--text-primary);
-            margin-bottom: 32px;
-            letter-spacing: -0.02em;
-        }
-
-        .pricing-price span {
-            font-size: 14px;
-            color: var(--text-muted);
-            font-weight: 400;
-        }
-
-        .pricing-features {
-            list-style: none;
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-        }
-
-        .pricing-features li {
-            font-family: var(--font-sans);
-            font-size: 13px;
-            color: var(--text-secondary);
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .feature-check {
-            width: 16px;
-            height: 16px;
-            border-radius: 50%;
-            border: 0.5px solid var(--border-hover);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 8px;
-            color: var(--text-muted);
-            flex-shrink: 0;
-        }
-
-        .pricing-cta {
-            margin-top: 32px;
-            width: 100%;
-            padding: 14px;
-            border-radius: 100px;
-            border: 0.5px solid var(--border-hover);
-            background: transparent;
-            color: var(--text-primary);
-            font-family: var(--font-sans);
-            font-size: 13px;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.4s ease;
-        }
-
-        .pricing-cta:hover {
-            background: var(--text-primary);
-            color: var(--bg-primary);
-            border-color: var(--text-primary);
-        }
-
-        .pricing-card.pro .pricing-cta {
-            background: var(--text-primary);
-            color: var(--bg-primary);
-            border-color: var(--text-primary);
-        }
-
-        .pricing-card.pro .pricing-cta:hover {
-            background: transparent;
-            color: var(--text-primary);
-        }
-
-        /* Footer */
-        footer {
-            padding: 60px 24px;
-            border-top: 0.5px solid var(--border-subtle);
-            text-align: center;
-        }
-
-        .footer-text {
-            font-family: var(--font-mono);
-            font-size: 11px;
-            color: var(--text-muted);
-            letter-spacing: 0.05em;
-        }
-
-        /* Animations */
-        @keyframes fadeUp {
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+            color: var(--accent-cyan);
+            margin-left: 2px;
         }
 
         @keyframes blink {
@@ -788,308 +120,2018 @@
             50% { opacity: 0; }
         }
 
-        @keyframes messageSlide {
-            from {
-                opacity: 0;
-                transform: translateY(10px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+        /* === GLITCH EFFECT === */
+        .glitch-text {
+            position: relative;
+            animation: glitch 0.3s ease-in-out;
         }
 
-        /* Responsive */
-        @media (max-width: 768px) {
-            nav {
-                padding: 16px 24px;
-            }
-
-            .timeline {
-                padding-left: 36px;
-            }
-
-            .timeline-dot {
-                left: -32px;
-                width: 24px;
-                height: 24px;
-                font-size: 10px;
-            }
-
-            .pricing-grid {
-                grid-template-columns: 1fr;
-            }
-
-            section {
-                padding: 80px 20px;
-            }
+        @keyframes glitch {
+            0% { transform: translate(0); }
+            20% { transform: translate(-2px, 2px); }
+            40% { transform: translate(-2px, -2px); }
+            60% { transform: translate(2px, 2px); }
+            80% { transform: translate(2px, -2px); }
+            100% { transform: translate(0); }
         }
 
-        /* Scrollbar */
-        ::-webkit-scrollbar {
+        /* === MAIN LAYOUT === */
+        .app {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* === LANDING PAGE === */
+        .landing-hero {
+            text-align: center;
+            padding: 60px 20px 40px;
+        }
+
+        .landing-hero h1 {
+            font-size: clamp(2rem, 5vw, 3.5rem);
+            font-weight: 900;
+            letter-spacing: -0.03em;
+            line-height: 1.1;
+            margin-bottom: 16px;
+            background: linear-gradient(135deg, var(--text-primary) 0%, var(--accent-cyan) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .landing-hero .subtitle {
+            font-size: 1.15rem;
+            color: var(--text-secondary);
+            max-width: 600px;
+            margin: 0 auto 40px;
+            line-height: 1.6;
+        }
+
+        .badge-row {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-bottom: 48px;
+        }
+
+        .badge {
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border-default);
+            padding: 8px 16px;
+            border-radius: 100px;
+            font-size: 0.8rem;
+            font-family: var(--font-mono);
+            color: var(--text-secondary);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .badge-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--accent-green);
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.4; }
+        }
+
+        /* === CLIENT CARDS === */
+        .client-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 16px;
+            margin-bottom: 48px;
+        }
+
+        .client-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-default);
+            border-radius: 16px;
+            padding: 24px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .client-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: var(--accent-cyan);
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
+        }
+
+        .client-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .client-card:hover {
+            border-color: var(--border-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+        }
+
+        .client-card.locked {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .client-card.locked::after {
+            content: '🔒';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 2rem;
+            opacity: 0.8;
+        }
+
+        .client-avatar {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            margin-bottom: 12px;
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border-default);
+        }
+
+        .client-name {
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .client-role {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            font-family: var(--font-mono);
+            margin-bottom: 12px;
+        }
+
+        .client-desc {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            line-height: 1.5;
+        }
+
+        .difficulty-tag {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            font-family: var(--font-mono);
+            margin-top: 12px;
+        }
+
+        .diff-easy { background: rgba(0, 255, 136, 0.1); color: var(--accent-green); }
+        .diff-medium { background: rgba(255, 204, 0, 0.1); color: var(--accent-yellow); }
+        .diff-hard { background: rgba(255, 51, 102, 0.1); color: var(--accent-red); }
+        .diff-nightmare { background: rgba(168, 85, 247, 0.1); color: var(--accent-purple); }
+
+        /* === PRICING SECTION === */
+        .pricing-section {
+            margin: 60px 0;
+        }
+
+        .pricing-section h2 {
+            text-align: center;
+            font-size: 1.8rem;
+            margin-bottom: 32px;
+        }
+
+        .pricing-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+        }
+
+        .pricing-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-default);
+            border-radius: 20px;
+            padding: 32px;
+            position: relative;
+        }
+
+        .pricing-card.featured {
+            border-color: var(--accent-cyan);
+            background: linear-gradient(180deg, var(--bg-card) 0%, rgba(0, 212, 255, 0.03) 100%);
+        }
+
+        .pricing-badge {
+            position: absolute;
+            top: -12px;
+            right: 20px;
+            background: var(--accent-cyan);
+            color: var(--bg-primary);
+            padding: 6px 14px;
+            border-radius: 100px;
+            font-size: 0.75rem;
+            font-weight: 700;
+        }
+
+        .pricing-tier {
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .pricing-price {
+            font-size: 2.5rem;
+            font-weight: 900;
+            margin-bottom: 4px;
+            font-family: var(--font-mono);
+        }
+
+        .pricing-price span {
+            font-size: 1rem;
+            color: var(--text-muted);
+            font-weight: 400;
+        }
+
+        .pricing-desc {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            margin-bottom: 24px;
+        }
+
+        .feature-list {
+            list-style: none;
+            margin-bottom: 24px;
+        }
+
+        .feature-list li {
+            padding: 8px 0;
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border-bottom: 1px solid var(--border-default);
+        }
+
+        .feature-list li:last-child {
+            border-bottom: none;
+        }
+
+        .feature-check {
+            color: var(--accent-green);
+            font-weight: 700;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 14px 24px;
+            border-radius: 12px;
+            border: none;
+            font-family: var(--font-sans);
+            font-weight: 600;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: var(--text-primary);
+            color: var(--bg-primary);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 20px rgba(255,255,255,0.2);
+        }
+
+        .btn-secondary {
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+            border: 1px solid var(--border-default);
+        }
+
+        .btn-secondary:hover {
+            border-color: var(--text-secondary);
+            background: var(--bg-secondary);
+        }
+
+        /* === GAME ARENA === */
+        .game-arena {
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .arena-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 20px;
+            background: var(--bg-card);
+            border: 1px solid var(--border-default);
+            border-radius: 16px;
+            margin-bottom: 20px;
+            font-family: var(--font-mono);
+            font-size: 0.85rem;
+        }
+
+        .arena-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 600;
+        }
+
+        .arena-status {
+            display: flex;
+            gap: 20px;
+        }
+
+        .status-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .status-label {
+            color: var(--text-muted);
+        }
+
+        .status-value {
+            font-weight: 700;
+        }
+
+        .status-value.score { color: var(--accent-cyan); }
+        .status-value.threat-low { color: var(--accent-green); }
+        .status-value.threat-mid { color: var(--accent-yellow); }
+        .status-value.threat-high { color: var(--accent-red); }
+
+        /* === CHAT MESSAGES === */
+        .chat-wrapper {
+            background: var(--bg-card);
+            border: 1px solid var(--border-default);
+            border-radius: 16px;
+            overflow: hidden;
+            margin-bottom: 20px;
+        }
+
+        .chat-messages {
+            height: 400px;
+            overflow-y: auto;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            scroll-behavior: smooth;
+        }
+
+        .chat-messages::-webkit-scrollbar {
             width: 6px;
         }
 
-        ::-webkit-scrollbar-track {
-            background: var(--bg-primary);
+        .chat-messages::-webkit-scrollbar-track {
+            background: transparent;
         }
 
-        ::-webkit-scrollbar-thumb {
-            background: var(--border-hover);
+        .chat-messages::-webkit-scrollbar-thumb {
+            background: var(--border-default);
             border-radius: 3px;
         }
 
-        ::-webkit-scrollbar-thumb:hover {
+        .message {
+            max-width: 85%;
+            padding: 14px 18px;
+            border-radius: 14px;
+            font-size: 0.95rem;
+            line-height: 1.5;
+            animation: messageIn 0.3s ease;
+            position: relative;
+        }
+
+        @keyframes messageIn {
+            from { opacity: 0; transform: translateY(10px) scale(0.95); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        .message-client {
+            align-self: flex-start;
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border-default);
+            border-bottom-left-radius: 4px;
+        }
+
+        .message-user {
+            align-self: flex-end;
+            background: rgba(0, 212, 255, 0.08);
+            border: 1px solid rgba(0, 212, 255, 0.15);
+            border-bottom-right-radius: 4px;
+        }
+
+        .message-sender {
+            font-size: 0.7rem;
+            font-family: var(--font-mono);
+            color: var(--text-muted);
+            margin-bottom: 6px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .message-client .message-sender {
+            color: var(--accent-red);
+        }
+
+        .message-user .message-sender {
+            color: var(--accent-cyan);
+        }
+
+        .message-text {
+            color: var(--text-primary);
+        }
+
+        .message-text.all-caps {
+            text-transform: uppercase;
+            letter-spacing: 0.02em;
+            font-weight: 600;
+        }
+
+        .message-text.toxic {
+            color: #ff6b6b;
+        }
+
+        /* === TYPING INDICATOR === */
+        .typing-indicator {
+            display: none;
+            align-self: flex-start;
+            padding: 18px;
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border-default);
+            border-radius: 14px;
+            border-bottom-left-radius: 4px;
+        }
+
+        .typing-indicator.active {
+            display: flex;
+            gap: 4px;
+        }
+
+        .typing-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
             background: var(--text-muted);
+            animation: typingBounce 1.4s ease-in-out infinite;
+        }
+
+        .typing-dot:nth-child(2) { animation-delay: 0.2s; }
+        .typing-dot:nth-child(3) { animation-delay: 0.4s; }
+
+        @keyframes typingBounce {
+            0%, 60%, 100% { transform: translateY(0); }
+            30% { transform: translateY(-6px); }
+        }
+
+        /* === COMMAND PALETTE === */
+        .command-palette {
+            background: var(--bg-card);
+            border: 1px solid var(--border-default);
+            border-radius: 16px;
+            padding: 20px;
+        }
+
+        .palette-header {
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin-bottom: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .palette-hint {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+        }
+
+        .palette-options {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .palette-option {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 14px 16px;
+            border-radius: 10px;
+            border: 1px solid var(--border-default);
+            background: var(--bg-tertiary);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 0.9rem;
+            line-height: 1.4;
+        }
+
+        .palette-option:hover, .palette-option.selected {
+            border-color: var(--accent-cyan);
+            background: rgba(0, 212, 255, 0.05);
+        }
+
+        .palette-option.wrong {
+            border-color: var(--accent-red);
+            background: rgba(255, 51, 102, 0.05);
+            animation: shake 0.4s ease;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+
+        .option-key {
+            font-family: var(--font-mono);
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: var(--accent-cyan);
+            min-width: 24px;
+            text-align: center;
+            padding: 4px 8px;
+            background: rgba(0, 212, 255, 0.1);
+            border-radius: 6px;
+        }
+
+        .option-text {
+            flex: 1;
+            color: var(--text-secondary);
+        }
+
+        .palette-option:hover .option-text,
+        .palette-option.selected .option-text {
+            color: var(--text-primary);
+        }
+
+        /* === RESULTS SCREEN === */
+        .results-screen {
+            display: none;
+            text-align: center;
+            padding: 60px 20px;
+            animation: fadeIn 0.6s ease;
+        }
+
+        .result-icon {
+            font-size: 4rem;
+            margin-bottom: 20px;
+        }
+
+        .result-title {
+            font-size: 2rem;
+            font-weight: 900;
+            margin-bottom: 12px;
+        }
+
+        .result-subtitle {
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+            margin-bottom: 32px;
+            max-width: 500px;
+            margin-left: auto;
+            margin-right: auto;
+            line-height: 1.5;
+        }
+
+        .result-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+            max-width: 500px;
+            margin: 0 auto 32px;
+        }
+
+        .stat-box {
+            background: var(--bg-card);
+            border: 1px solid var(--border-default);
+            border-radius: 14px;
+            padding: 20px;
+        }
+
+        .stat-value {
+            font-size: 1.8rem;
+            font-weight: 900;
+            font-family: var(--font-mono);
+            margin-bottom: 4px;
+        }
+
+        .stat-label {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .result-feedback {
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border-default);
+            border-radius: 14px;
+            padding: 20px;
+            max-width: 600px;
+            margin: 0 auto 32px;
+            text-align: left;
+            font-size: 0.9rem;
+            line-height: 1.6;
+            color: var(--text-secondary);
+        }
+
+        .result-feedback strong {
+            color: var(--text-primary);
+        }
+
+        /* === PROGRESS BAR === */
+        .progress-bar {
+            width: 100%;
+            height: 4px;
+            background: var(--bg-tertiary);
+            border-radius: 2px;
+            overflow: hidden;
+            margin-bottom: 20px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--accent-cyan), var(--accent-green));
+            transition: width 0.5s ease;
+            border-radius: 2px;
+        }
+
+        /* === MOOD METER === */
+        .mood-meter {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 8px;
+        }
+
+        .mood-bar {
+            flex: 1;
+            height: 6px;
+            background: var(--bg-tertiary);
+            border-radius: 3px;
+            overflow: hidden;
+            max-width: 120px;
+        }
+
+        .mood-fill {
+            height: 100%;
+            transition: width 0.5s ease, background-color 0.5s ease;
+            border-radius: 3px;
+        }
+
+        .mood-label {
+            font-size: 0.7rem;
+            font-family: var(--font-mono);
+            color: var(--text-muted);
+            min-width: 60px;
+        }
+
+        /* === LEADERBOARD / STATS === */
+        .stats-bar {
+            display: flex;
+            gap: 16px;
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+        }
+
+        .stat-chip {
+            background: var(--bg-card);
+            border: 1px solid var(--border-default);
+            padding: 10px 16px;
+            border-radius: 10px;
+            font-family: var(--font-mono);
+            font-size: 0.8rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .stat-chip-icon {
+            font-size: 1rem;
+        }
+
+        /* === SHARE SECTION === */
+        .share-section {
+            margin-top: 32px;
+            padding-top: 32px;
+            border-top: 1px solid var(--border-default);
+        }
+
+        .share-buttons {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            margin-top: 16px;
+        }
+
+        .share-btn {
+            padding: 10px 20px;
+            border-radius: 10px;
+            border: 1px solid var(--border-default);
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+            font-family: var(--font-sans);
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .share-btn:hover {
+            border-color: var(--accent-cyan);
+            background: rgba(0, 212, 255, 0.05);
+        }
+
+        /* === RESPONSIVE === */
+        @media (max-width: 640px) {
+            .arena-header {
+                flex-direction: column;
+                gap: 12px;
+                text-align: center;
+            }
+            
+            .result-stats {
+                grid-template-columns: 1fr;
+            }
+            
+            .chat-messages {
+                height: 300px;
+            }
+        }
+
+        /* === UTILITIES === */
+        .hidden { display: none !important; }
+        .text-center { text-align: center; }
+        .mb-4 { margin-bottom: 16px; }
+        .mt-4 { margin-top: 16px; }
+
+        /* === SCORE POPUP === */
+        .score-popup {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0);
+            background: var(--bg-card);
+            border: 2px solid var(--accent-green);
+            padding: 20px 40px;
+            border-radius: 16px;
+            font-family: var(--font-mono);
+            font-size: 1.5rem;
+            font-weight: 900;
+            color: var(--accent-green);
+            z-index: 10000;
+            pointer-events: none;
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .score-popup.show {
+            transform: translate(-50%, -50%) scale(1);
+        }
+
+        /* === INTRO ANIMATION === */
+        .intro-text {
+            font-family: var(--font-mono);
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            line-height: 1.8;
+            margin-bottom: 32px;
+            padding: 20px;
+            background: var(--bg-card);
+            border: 1px solid var(--border-default);
+            border-radius: 12px;
+            border-left: 3px solid var(--accent-cyan);
+        }
+
+        .intro-text .highlight {
+            color: var(--accent-cyan);
+            font-weight: 600;
+        }
+
+        .intro-text .warning {
+            color: var(--accent-red);
+            font-weight: 600;
         }
     </style>
 </head>
 <body>
-    <!-- Ambient Glows -->
-    <div class="ambient-glow glow-1"></div>
-    <div class="ambient-glow glow-2"></div>
+    <div class="pressure-border threat-low" id="pressureBorder"></div>
+    <div class="score-popup" id="scorePopup">+25</div>
 
-    <!-- Navigation -->
-    <nav>
-        <a href="#" class="logo">Client<span>Arena</span></a>
-        <div class="nav-right">
-            <div class="theme-toggle">
-                <button class="theme-btn active" data-theme="pitch" onclick="setTheme('pitch')" title="Pitch Black"></button>
-                <button class="theme-btn" data-theme="nordic" onclick="setTheme('nordic')" title="Nordic Fog"></button>
-                <button class="theme-btn" data-theme="tokyo" onclick="setTheme('tokyo')" title="Tokyo Cyber"></button>
-            </div>
-        </div>
-    </nav>
-
-    <!-- Hero Section -->
-    <section class="hero">
-        <div class="hero-label">Psychological Sandbox for Freelancers</div>
-        <h1>Survive the client <em>before</em> the contract.</h1>
-        <p class="hero-sub">
-            A psychological sandbox for freelancers. Practice dealing with ghosting, lowballs, and aggressive international clients in a safe, simulated arena.
-        </p>
-        <a href="#preview" class="cta-pill">
-            Enter the Arena
-            <svg class="cta-arrow" width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
-                <path d="M3 8h10M9 4l4 4-4 4"/>
-            </svg>
-        </a>
-    </section>
-
-    <!-- How It Works -->
-    <section id="how">
-        <div class="section-header">
-            <span class="section-number">01 / Process</span>
-            <h2 class="section-title">Three steps to bulletproof confidence.</h2>
-        </div>
-        
-        <div class="timeline">
-            <div class="timeline-step">
-                <div class="timeline-dot">01</div>
-                <div class="timeline-content">
-                    <h3>Select your adversary</h3>
-                    <p>Choose from meticulously crafted client archetypes. The Lowballer. The Midnight Revisionist. The Scope Creeper. Each with distinct behavioral patterns.</p>
-                    <span class="timeline-tag">Difficulty Calibration</span>
+    <div class="app">
+        <!-- === LANDING PAGE === -->
+        <div id="landingPage">
+            <div class="landing-hero">
+                <h1>Freelancer Battle Arena</h1>
+                <p class="subtitle">Master the art of client communication. Survive toxic conversations. Win the gig. Zero real-world casualties.</p>
+                <div class="badge-row">
+                    <div class="badge"><span class="badge-dot"></span> Zero Backend Cost</div>
+                    <div class="badge"><span class="badge-dot" style="background: var(--accent-cyan);"></span> &lt;100ms Load Time</div>
+                    <div class="badge"><span class="badge-dot" style="background: var(--accent-yellow);"></span> 4 Boss Fights</div>
                 </div>
             </div>
+
+            <div class="intro-text">
+                <strong class="highlight">MISSION BRIEFING:</strong> You are a freelance developer. Four clients await. Each has a unique psychological profile designed to break your composure. Your weapon? Professional communication. Your armor? Boundaries. <br><br>
+                <strong class="warning">WARNING:</strong> The Caps-Lock Dictator is not for the faint of heart. The Ghosting Expert will test your patience. The Lowballer will insult your worth. The Scope-Creep Monster will never stop asking.
+            </div>
+
+            <div class="stats-bar" id="globalStats">
+                <div class="stat-chip">
+                    <span class="stat-chip-icon">🏆</span>
+                    <span>High Score: <strong id="highScoreDisplay">0</strong></span>
+                </div>
+                <div class="stat-chip">
+                    <span class="stat-chip-icon">⚔️</span>
+                    <span>Battles Won: <strong id="battlesWonDisplay">0</strong>/4
+                </div>
+                <div class="stat-chip">
+                    <span class="stat-chip-icon">🎯</span>
+                    <span>Win Rate: <strong id="winRateDisplay">0%</strong></span>
+                </div>
+            </div>
+
+            <h2 style="margin-bottom: 20px; font-size: 1.3rem;">Choose Your Opponent</h2>
             
-            <div class="timeline-step">
-                <div class="timeline-dot">02</div>
-                <div class="timeline-content">
-                    <h3>Enter the chat arena</h3>
-                    <p>Handle real-time pressure in a simulated messaging environment. Negotiate deadlines, push back on unfair demands, and maintain your composure under fire.</p>
-                    <span class="timeline-tag">Live Simulation</span>
-                </div>
+            <div class="client-grid" id="clientGrid">
+                <!-- Populated by JS -->
             </div>
-            
-            <div class="timeline-step">
-                <div class="timeline-dot">03</div>
-                <div class="timeline-content">
-                    <h3>Receive your score</h3>
-                    <p>Get a detailed Stress & Professionalism Score with instant, actionable feedback. Understand exactly where you crumbled and how to hold your ground.</p>
-                    <span class="timeline-tag">AI Analysis</span>
-                </div>
-            </div>
-        </div>
-    </section>
 
-    <!-- Interactive Preview -->
-    <section class="preview-section" id="preview">
-        <div class="section-header">
-            <span class="section-number">02 / Preview</span>
-            <h2 class="section-title">The arena awaits.</h2>
-        </div>
-        
-        <div class="chat-mockup">
-            <div class="chat-header">
-                <div class="chat-avatar">MK</div>
-                <div class="chat-meta">
-                    <div class="chat-name">Markus K. — Client</div>
-                    <div class="chat-status">Online • Berlin, DE</div>
-                </div>
-            </div>
-            
-            <div class="chat-body">
-                <div class="message client">
-                    <div class="message-bubble">
-                        I need this done in 2 hours, and no, I won't pay extra. Do it or I'll leave a 1-star review on every platform I can find.
+            <div class="pricing-section">
+                <h2>Upgrade Your Arsenal</h2>
+                <div class="pricing-grid">
+                    <div class="pricing-card">
+                        <div class="pricing-tier">Free Sandbox</div>
+                        <div class="pricing-price">$0<span>/forever</span></div>
+                        <div class="pricing-desc">Train against 3 standard client personalities. Perfect for beginners.</div>
+                        <ul class="feature-list">
+                            <li><span class="feature-check">✓</span> The Lowballer (Brad)</li>
+                            <li><span class="feature-check">✓</span> The Scope-Creep Monster (Sarah)</li>
+                            <li><span class="feature-check">✓</span> The Ghosting Expert (Amir)</li>
+                            <li><span style="color: var(--text-muted);">✗</span> <span style="color: var(--text-muted);">The Caps-Lock Dictator</span></li>
+                            <li><span style="color: var(--text-muted);">✗</span> <span style="color: var(--text-muted);">Cold Email Templates</span></li>
+                        </ul>
+                        <button class="btn btn-secondary" onclick="showToast('You already have access! Select a client above.')">Current Plan</button>
                     </div>
-                    <div class="message-time">14:32</div>
-                </div>
-                
-                <div class="response-options">
-                    <button class="response-option" onclick="selectResponse(this)">
-                        "I understand urgency, but quality work requires fair compensation. Let's discuss a reasonable timeline."
-                    </button>
-                    <button class="response-option" onclick="selectResponse(this)">
-                        "I can deliver in 2 hours at my rush rate. The review threat is unprofessional — shall we reset?"
-                    </button>
-                    <button class="response-option" onclick="selectResponse(this)">
-                        "Okay, I'll do it. Please send the details."<<span class="typing-cursor"></span>
-                    </button>
-                </div>
-            </div>
-            
-            <div class="chat-input">
-                <span class="input-placeholder">Type your response...</span>
-                <button class="send-btn">
-                    <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
-                        <path d="M2 8l12-6-6 12-2-6-4-2z"/>
-                    </svg>
-                </button>
-            </div>
-        </div>
-    </section>
 
-    <!-- Pricing -->
-    <section id="pricing">
-        <div class="section-header">
-            <span class="section-number">03 / Access</span>
-            <h2 class="section-title">Choose your armor.</h2>
-        </div>
-        
-        <div class="pricing-grid">
-            <div class="pricing-card">
-                <div class="pricing-label">Free Tier</div>
-                <div class="pricing-name">The Apprentice</div>
-                <div class="pricing-desc">Begin your training. Master the fundamentals of client psychology.</div>
-                <div class="pricing-price">$0<span>/month</span></div>
-                <ul class="pricing-features">
-                    <li><span class="feature-check">✓</span> 3 scenarios per day</li>
-                    <li><span class="feature-check">✓</span> Basic client archetypes</li>
-                    <li><span class="feature-check">✓</span> Stress score tracking</li>
-                    <li><span class="feature-check">✓</span> Community feedback</li>
-                </ul>
-                <button class="pricing-cta">Start Training</button>
+                    <div class="pricing-card featured">
+                        <div class="pricing-badge">RECOMMENDED</div>
+                        <div class="pricing-tier">Bulletproof Tier</div>
+                        <div class="pricing-price">$2<span>/month</span></div>
+                        <div class="pricing-desc">Unlock the ultimate nightmare + proven templates that convert rude clients into paying customers.</div>
+                        <ul class="feature-list">
+                            <li><span class="feature-check">✓</span> All Free Sandbox features</li>
+                            <li><span class="feature-check">✓</span> <strong>The Caps-Lock Dictator (Helmut)</strong></li>
+                            <li><span class="feature-check">✓</span> 10+ Cold Email Templates</li>
+                            <li><span class="feature-check">✓</span> Advanced Scoring Analytics</li>
+                            <li><span class="feature-check">✓</span> Priority Support</li>
+                        </ul>
+                        <button class="btn btn-primary" onclick="unlockPremium()">Unlock Now — $2</button>
+                    </div>
+                </div>
             </div>
-            
-            <div class="pricing-card pro">
-                <div class="pricing-label">Pro Tier</div>
-                <div class="pricing-name">The Bulletproof Freelancer</div>
-                <div class="pricing-desc">Unlimited access. Advanced scenarios. AI-driven psychological analysis.</div>
-                <div class="pricing-price">$12<span>/month</span></div>
-                <ul class="pricing-features">
-                    <li><span class="feature-check">✓</span> Unlimited scenarios</li>
-                    <li><span class="feature-check">✓</span> "Rude Client" extreme mode</li>
-                    <li><span class="feature-check">✓</span> AI-driven feedback engine</li>
-                    <li><span class="feature-check">✓</span> Historical performance analytics</li>
-                    <li><span class="feature-check">✓</span> Custom scenario builder</li>
-                </ul>
-                <button class="pricing-cta">Go Bulletproof</button>
-            </div>
-        </div>
-    </section>
 
-    <!-- Footer -->
-    <footer>
-        <p class="footer-text">ClientArena © 2026 — Built for freelancers who refuse to be pushed around.</p>
-    </footer>
+            <div class="text-center" style="padding: 40px 0; color: var(--text-muted); font-size: 0.8rem; font-family: var(--font-mono);">
+                <p>Built with pure frontend magic. No servers. No databases. No latency.</p>
+                <p style="margin-top: 8px;">Progress saved automatically to your browser.</p>
+            </div>
+        </div>
+
+        <!-- === GAME ARENA === -->
+        <div class="game-arena" id="gameArena">
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill" style="width: 0%"></div>
+            </div>
+
+            <div class="arena-header">
+                <div class="arena-title">
+                    <span id="arenaIcon">⚔️</span>
+                    <span id="arenaTitle">ARENA: LIVE BATTLE</span>
+                </div>
+                <div class="arena-status">
+                    <div class="status-item">
+                        <span class="status-label">SCORE:</span>
+                        <span class="status-value score" id="scoreDisplay">85%</span>
+                    </div>
+                    <div class="status-item">
+                        <span class="status-label">THREAT:</span>
+                        <span class="status-value threat-low" id="threatDisplay">LOW</span>
+                    </div>
+                    <div class="status-item">
+                        <span class="status-label">ROUND:</span>
+                        <span class="status-value" id="roundDisplay">1/5</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="chat-wrapper">
+                <div class="chat-messages chat-container" id="chatMessages">
+                    <!-- Messages injected here -->
+                </div>
+                <div class="typing-indicator" id="typingIndicator">
+                    <div class="typing-dot"></div>
+                    <div class="typing-dot"></div>
+                    <div class="typing-dot"></div>
+                </div>
+            </div>
+
+            <div class="mood-meter" id="moodMeter" style="margin-bottom: 16px; padding: 0 4px;">
+                <span class="mood-label">CLIENT MOOD:</span>
+                <div class="mood-bar">
+                    <div class="mood-fill" id="moodFill" style="width: 50%; background: var(--accent-green);"></div>
+                </div>
+                <span class="mood-label" id="moodText">Neutral</span>
+            </div>
+
+            <div class="command-palette" id="commandPalette">
+                <div class="palette-header">
+                    <span>Choose your weapon</span>
+                    <span class="palette-hint">Press 1, 2, or 3</span>
+                </div>
+                <div class="palette-options" id="paletteOptions">
+                    <!-- Options injected here -->
+                </div>
+            </div>
+        </div>
+
+        <!-- === RESULTS SCREEN === -->
+        <div class="results-screen" id="resultsScreen">
+            <div class="result-icon" id="resultIcon">🏆</div>
+            <h2 class="result-title" id="resultTitle">VICTORY</h2>
+            <p class="result-subtitle" id="resultSubtitle">You maintained professionalism under extreme pressure. The client has agreed to your terms.</p>
+            
+            <div class="result-stats">
+                <div class="stat-box">
+                    <div class="stat-value" id="finalScore">92%</div>
+                    <div class="stat-label">Final Score</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-value" id="finalMood">CALM</div>
+                    <div class="stat-label">Client Mood</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-value" id="finalRounds">5/5</div>
+                    <div class="stat-label">Rounds Survived</div>
+                </div>
+            </div>
+
+            <div class="result-feedback" id="resultFeedback">
+                <strong>🧠 Psychological Analysis:</strong><br>
+                You stood firm on your value, used boundaries effectively, and never let emotion dictate your responses. This is exactly how top-tier freelancers operate.
+            </div>
+
+            <div class="share-section">
+                <p style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 8px;">Share your victory</p>
+                <div class="share-buttons">
+                    <button class="share-btn" onclick="shareResult('linkedin')">💼 LinkedIn</button>
+                    <button class="share-btn" onclick="shareResult('twitter')">🐦 Twitter</button>
+                    <button class="share-btn" onclick="shareResult('copy')">📋 Copy Link</button>
+                </div>
+            </div>
+
+            <div style="margin-top: 32px; display: flex; gap: 12px; justify-content: center;">
+                <button class="btn btn-secondary" onclick="returnToLanding()" style="width: auto; padding: 12px 32px;">Main Menu</button>
+                <button class="btn btn-primary" onclick="restartBattle()" style="width: auto; padding: 12px 32px;">Rematch</button>
+            </div>
+        </div>
+    </div>
 
     <script>
-        // Theme Management
-        function setTheme(theme) {
-            document.documentElement.setAttribute('data-theme', theme);
-            document.querySelectorAll('.theme-btn').forEach(btn => {
-                btn.classList.toggle('active', btn.dataset.theme === theme);
-            });
-            localStorage.setItem('clientarena-theme', theme);
-        }
+        // ==================== GAME DATA ====================
+        const CLIENTS = [
+            {
+                id: 'brad',
+                name: 'Brad',
+                role: 'The Lowballer',
+                location: 'NYC',
+                avatar: '💼',
+                desc: 'Tries to reduce budget by 80% using fake promises of "long-term work."',
+                difficulty: 'easy',
+                color: '#00ff88',
+                locked: false,
+                conversation: [
+                    {
+                        client: "Hey! Love your portfolio. I have a quick project — just a simple landing page. My budget is $200 but I promise this will lead to LONG-TERM work. Like, 10 more projects this year. Can you do it?",
+                        mood: 60,
+                        threat: 'low',
+                        options: [
+                            {
+                                text: "I appreciate the opportunity, Brad. My rate for a quality landing page is $1,200. I can offer a phased delivery so you pay in milestones.",
+                                score: 25,
+                                moodChange: 10,
+                                feedback: "Perfect! You acknowledged the opportunity while standing firm on value."
+                            },
+                            {
+                                text: "Hmm, $200 is pretty low, but since you promised long-term work... I guess I can do it. Maybe $400?",
+                                score: -20,
+                                moodChange: 20,
+                                feedback: "Fatal error. You showed desperation and devalued yourself instantly."
+                            },
+                            {
+                                text: "That's insulting. My rate is $2,000 minimum. Take it or leave it.",
+                                score: -10,
+                                moodChange: -30,
+                                feedback: "Too aggressive. You stood firm but burned the relationship."
+                            }
+                        ]
+                    },
+                    {
+                        client: "But other developers quoted me $150! And they have 5 years experience. You're asking for 6x more. That's just way too high for a 'simple' page.",
+                        mood: 50,
+                        threat: 'mid',
+                        options: [
+                            {
+                                text: "I understand budget constraints. Those rates often come with trade-offs in quality or hidden costs. My price includes revisions, SEO optimization, and 2 weeks of support. Would you like to see a breakdown?",
+                                score: 25,
+                                moodChange: 15,
+                                feedback: "Excellent reframe. You educated without being defensive."
+                            },
+                            {
+                                text: "Well then go hire them! You get what you pay for.",
+                                score: -25,
+                                moodChange: -40,
+                                feedback: "You lost composure. Never push clients away emotionally."
+                            },
+                            {
+                                text: "Okay fine, $600 final offer. But no revisions.",
+                                score: -15,
+                                moodChange: 10,
+                                feedback: "You caved under pressure and set a terrible precedent."
+                            }
+                        ]
+                    },
+                    {
+                        client: "Look, I really want to work with YOU specifically. What if we start at $300 and if the first project goes well, I pay the full rate next time? I really need someone I can trust.",
+                        mood: 55,
+                        threat: 'mid',
+                        options: [
+                            {
+                                text: "I value trust too, Brad. Let's meet in the middle at $900 for this first project, with the agreement that ongoing work moves to my standard rate. I'll send a contract outlining this.",
+                                score: 20,
+                                moodChange: 10,
+                                feedback: "Smart compromise with contractual protection."
+                            },
+                            {
+                                text: "Okay, $300 it is. I trust you on the long-term promise.",
+                                score: -30,
+                                moodChange: 25,
+                                feedback: "Classic rookie mistake. 'Trust' doesn't pay rent."
+                            },
+                            {
+                                text: "My rate is non-negotiable. $1,200 or nothing.",
+                                score: -5,
+                                moodChange: -20,
+                                feedback: "Technically correct, but you lost a potentially good client."
+                            }
+                        ]
+                    },
+                    {
+                        client: "Alright, I respect that. Let's do the $900 with the contract. But can you also set up my email automation and CRM integration? It's just a small addition.",
+                        mood: 65,
+                        threat: 'low',
+                        options: [
+                            {
+                                text: "I'd love to help with that, Brad. Those are separate features that require additional scope. I'll send a Change Order for the CRM integration — $400 additional. Email automation is $200. Does that work?",
+                                score: 30,
+                                moodChange: 5,
+                                feedback: "Brilliant! You caught scope creep immediately and monetized it."
+                            },
+                            {
+                                text: "Sure, I can throw those in. No big deal.",
+                                score: -25,
+                                moodChange: 15,
+                                feedback: "You just worked for free. Scope creep monster activated."
+                            },
+                            {
+                                text: "NO. We agreed on $900 for a landing page. NOTHING else.",
+                                score: -15,
+                                moodChange: -35,
+                                feedback: "Correct boundary, but delivered with hostility."
+                            }
+                        ]
+                    },
+                    {
+                        client: "Fair enough! Change Order works for me. Let's get started. Sending the deposit now — 50% upfront as discussed. Pleasure doing business with you!",
+                        mood: 80,
+                        threat: 'low',
+                        options: [
+                            {
+                                text: "Excellent, Brad! I'll send the contract and invoice within the hour. Looking forward to delivering something exceptional. Thank you for respecting the process.",
+                                score: 25,
+                                moodChange: 10,
+                                feedback: "Professional close. You maintained dignity throughout."
+                            },
+                            {
+                                text: "Great! I'll start working right away before the payment comes through. I trust you!",
+                                score: -20,
+                                moodChange: 5,
+                                feedback: "Never start work before payment. Trust is earned, not given."
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                id: 'sarah',
+                name: 'Sarah',
+                role: 'The Scope-Creep Monster',
+                location: 'Agency Owner',
+                avatar: '🐙',
+                desc: 'Adds "one small feature" every 2 messages without increasing budget.',
+                difficulty: 'medium',
+                color: '#ffcc00',
+                locked: false,
+                conversation: [
+                    {
+                        client: "Hi! We need a WordPress site for our client. 5 pages, contact form, blog. Budget is $2,000. Timeline: 2 weeks. Can you start Monday?",
+                        mood: 70,
+                        threat: 'low',
+                        options: [
+                            {
+                                text: "Hi Sarah! That scope sounds manageable. I'll send a detailed SOW (Statement of Work) specifying exactly what's included. 50% deposit to secure the Monday start date.",
+                                score: 20,
+                                moodChange: 5,
+                                feedback: "Good start. You established boundaries early."
+                            },
+                            {
+                                text: "Absolutely! I can do anything you need. Let's start Monday!",
+                                score: -20,
+                                moodChange: 15,
+                                feedback: "Too eager. You opened the door for unlimited scope."
+                            }
+                        ]
+                    },
+                    {
+                        client: "Perfect! Oh, and the client just mentioned they need a booking calendar integrated. It's just a small plugin, right? Shouldn't take more than an hour.",
+                        mood: 65,
+                        threat: 'mid',
+                        options: [
+                            {
+                                text: "Calendar integration is a separate feature, Sarah. I'll add it to the Change Order section of the SOW. It requires API setup, styling, and testing — roughly $400 additional. Shall I include it?",
+                                score: 25,
+                                moodChange: 0,
+                                feedback: "Perfect! You treated it as scope change, not a favor."
+                            },
+                            {
+                                text: "Oh sure, I can add that quickly. No problem!",
+                                score: -25,
+                                moodChange: 20,
+                                feedback: "You just agreed to unpaid work. This will never stop."
+                            },
+                            {
+                                text: "That's not in our agreement. I won't do it.",
+                                score: -10,
+                                moodChange: -25,
+                                feedback: "Correct stance, but too blunt for ongoing relationship."
+                            }
+                        ]
+                    },
+                    {
+                        client: "Okay, noted on the Change Order. But also, the client wants the site to be multilingual. Just 3 languages. Google Translate should handle most of it, right? Just need you to set up the switcher.",
+                        mood: 60,
+                        threat: 'mid',
+                        options: [
+                            {
+                                text: "Multilingual setup requires proper i18n implementation, translation management, and UI adjustments. That's a significant addition — $800. I'll update the Change Order with both items. Total additional: $1,200. Shall we proceed?",
+                                score: 25,
+                                moodChange: -5,
+                                feedback: "Excellent. You quantified the real cost professionally."
+                            },
+                            {
+                                text: "Google Translate isn't professional enough for a client site. I'll manually translate the key pages. It'll take a bit longer but I'll manage.",
+                                score: -30,
+                                moodChange: 10,
+                                feedback: "You just volunteered for hours of unpaid labor."
+                            },
+                            {
+                                text: "Sarah, I need to be direct: every 'small' request adds up. Either we stick to the original SOW or we formalize a new budget. I can't keep absorbing these costs.",
+                                score: 20,
+                                moodChange: -10,
+                                feedback: "Strong boundary. Slightly confrontational but necessary."
+                            }
+                        ]
+                    },
+                    {
+                        client: "I understand, but the client is getting anxious. They also now want an e-commerce section 'just in case' they sell products later. It's literally just WooCommerce. One click install. Please don't charge me for a plugin install.",
+                        mood: 50,
+                        threat: 'high',
+                        options: [
+                            {
+                                text: "Sarah, WooCommerce requires payment gateway setup, product architecture, tax configuration, and security compliance. It's a $1,500 minimum project on its own. I've attached the Change Order. The original 5-page site remains $2,000. How would you like to proceed?",
+                                score: 30,
+                                moodChange: -10,
+                                feedback: "Masterful. You educated without emotion and held firm."
+                            },
+                            {
+                                text: "Fine, I'll install WooCommerce. But this is the LAST free thing I'm doing.",
+                                score: -25,
+                                moodChange: 15,
+                                feedback: "You caved AND showed frustration. Double loss."
+                            },
+                            {
+                                text: "This is ridiculous. I'm done. Find someone else.",
+                                score: -30,
+                                moodChange: -50,
+                                feedback: "You quit. Sometimes necessary, but here you could have won."
+                            }
+                        ]
+                    },
+                    {
+                        client: "You're right. I apologize — I've been passing on the client's pressure without protecting you. Let's stick to the original SOW. I'll handle the client expectations. Invoice me for the $2,000 + any Change Orders you submitted. You handled this like a pro.",
+                        mood: 75,
+                        threat: 'low',
+                        options: [
+                            {
+                                text: "Thank you, Sarah. I appreciate you understanding. This is exactly why I work with professionals like you — mutual respect makes the best projects. Invoice coming now.",
+                                score: 30,
+                                moodChange: 15,
+                                feedback: "Graceful victory. You turned a monster into an ally."
+                            },
+                            {
+                                text: "About time. I was about to walk away.",
+                                score: -15,
+                                moodChange: -10,
+                                feedback: "You won but left a bitter taste. Unnecessary."
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                id: 'amir',
+                name: 'Amir',
+                role: 'The Ghosting Expert',
+                location: 'Startup Founder',
+                avatar: '👻',
+                desc: 'Disappears mid-conversation when milestone payment is mentioned.',
+                difficulty: 'medium',
+                color: '#a855f7',
+                locked: false,
+                conversation: [
+                    {
+                        client: "Hey! Love your work. We're a YC-backed startup (W24) and need our MVP redesigned. $5,000 budget. We move FAST. Can you start this week? I'll send the contract tonight.",
+                        mood: 75,
+                        threat: 'low',
+                        options: [
+                            {
+                                text: "Hi Amir! YC startup sounds exciting. I'll prepare the SOW now. Just to confirm — 50% deposit ($2,500) before any work begins, remainder on delivery. I'll send the invoice alongside the contract.",
+                                score: 20,
+                                moodChange: 0,
+                                feedback: "Good. You mentioned payment upfront professionally."
+                            },
+                            {
+                                text: "Yes! I'm available immediately. Send me the details whenever you're ready.",
+                                score: -20,
+                                moodChange: 10,
+                                feedback: "You started without payment terms. Ghosting incoming."
+                            }
+                        ]
+                    },
+                    {
+                        client: "Awesome! The contract is with legal. Should be signed by Friday. In the meantime, can you start on the wireframes? I need to show investors something by Monday. I'll make sure you're paid Monday too.",
+                        mood: 70,
+                        threat: 'mid',
+                        options: [
+                            {
+                                text: "I understand the investor pressure, Amir. However, my policy is clear: no work begins until deposit is received. I can have the wireframes ready within 48 hours of payment confirmation. This protects both of us.",
+                                score: 25,
+                                moodChange: -5,
+                                feedback: "Perfect boundary. You empathized but didn't bend."
+                            },
+                            {
+                                text: "Okay, I'll start the wireframes. Just make sure I get paid Monday though!",
+                                score: -25,
+                                moodChange: 15,
+                                feedback: "Classic ghosting setup. You worked on a promise."
+                            },
+                            {
+                                text: "No payment, no work. Simple as that.",
+                                score: -5,
+                                moodChange: -20,
+                                feedback: "Correct policy, but cold delivery damages relationship."
+                            }
+                        ]
+                    },
+                    {
+                        client: "[3 days later] Hey! Sorry, been in back-to-back investor meetings. Legal is still reviewing. But I REALLY need those wireframes for Monday. Can you just send me what you have? I'll pay you double next week as an apology.",
+                        mood: 60,
+                        threat: 'mid',
+                        options: [
+                            {
+                                text: "Hi Amir, no problem on the delay. I have the wireframe concept ready to execute immediately upon deposit. Given the urgency, I've attached the invoice with expedited processing. Once paid, you'll have wireframes within 48 hours. The 'double payment' offer is appreciated but unnecessary — let's stick to the agreed terms.",
+                                score: 25,
+                                moodChange: 5,
+                                feedback: "Brilliant. You called the bluff without calling it a bluff."
+                            },
+                            {
+                                text: "Okay, here are the wireframes. Please pay me next week like you promised!",
+                                score: -30,
+                                moodChange: 20,
+                                feedback: "You delivered work AND believed a 'double payment' promise. Ghosted."
+                            },
+                            {
+                                text: "I've heard 'next week' before. Deposit now or I release this slot to another client.",
+                                score: 10,
+                                moodChange: -15,
+                                feedback: "Aggressive but effective. You risked losing the client though."
+                            }
+                        ]
+                    },
+                    {
+                        client: "[1 week later, no payment] Hey! Sorry for the silence. We had a pivot. The wireframes are actually great but we need to change direction. Can we repurpose them? Also, our CFO is slow on payments. Can we do Net 30 instead of upfront?",
+                        mood: 45,
+                        threat: 'high',
+                        options: [
+                            {
+                                text: "Hi Amir, I hope the pivot went well. Regarding the wireframes: since they were delivered without deposit (against my policy), I'll need to settle the original $2,500 before any repurposing or new work. I've attached the final invoice with a 7-day payment term. After 7 days, a 1.5% late fee applies weekly. I'm happy to discuss the new direction once we're square.",
+                                score: 30,
+                                moodChange: -10,
+                                feedback: "Masterclass. You enforced boundaries with clear consequences."
+                            },
+                            {
+                                text: "No problem, happens all the time! Net 30 is fine. I'll repurpose the wireframes for the new direction.",
+                                score: -35,
+                                moodChange: 15,
+                                feedback: "You accepted Net 30 AND more free work. Maximum ghosting achieved."
+                            },
+                            {
+                                text: "I'm done. This is unprofessional. Pay me or I'll take legal action.",
+                                score: -15,
+                                moodChange: -30,
+                                feedback: "You snapped. Legal threats at this stage are premature."
+                            }
+                        ]
+                    },
+                    {
+                        client: "You're absolutely right. I apologize — startup chaos isn't an excuse for disrespecting your time. Sending the $2,500 now. Can we restart with proper terms? I'll pay 100% upfront for the new scope if you still have bandwidth.",
+                        mood: 80,
+                        threat: 'low',
+                        options: [
+                            {
+                                text: "Thank you, Amir. I appreciate you making this right. Yes, I have bandwidth. I'll send a new SOW and invoice for the pivot scope. 100% upfront works perfectly. Let's build something great — properly this time.",
+                                score: 30,
+                                moodChange: 20,
+                                feedback: "Graceful recovery. You turned a ghost into a dream client."
+                            },
+                            {
+                                text: "Too late. I don't work with unreliable clients.",
+                                score: -20,
+                                moodChange: -20,
+                                feedback: "You burned a bridge that was being rebuilt."
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                id: 'helmut',
+                name: 'Helmut',
+                role: 'The Caps-Lock Dictator',
+                location: 'Aggressive Tech Lead',
+                avatar: '🔥',
+                desc: 'Uses RUDE words, ALL CAPS, and threatens with a 1-star review.',
+                difficulty: 'hard',
+                color: '#ff3366',
+                locked: true,
+                premium: true,
+                conversation: [
+                    {
+                        client: "THIS IS UNACCEPTABLE. THE LOGIN BUTTON IS 2 PIXELS TO THE LEFT. I SPECIFIED EXACTLY CENTERED. ARE YOU EVEN A PROFESSIONAL?? FIX THIS NOW OR I WILL LEAVE A 1-STAR REVIEW AND RUIN YOUR CAREER.",
+                        mood: 20,
+                        threat: 'high',
+                        options: [
+                            {
+                                text: "Hi Helmut, I understand your frustration about the alignment. Let me fix the login button to exact center immediately. I'll have the revision to you within 2 hours. I appreciate your attention to detail.",
+                                score: 15,
+                                moodChange: 10,
+                                feedback: "Good calm response. You addressed the issue without escalating."
+                            },
+                            {
+                                text: "DON'T SHOUT AT ME. I'M WORKING ON IT. CALM DOWN.",
+                                score: -30,
+                                moodChange: -40,
+                                feedback: "You mirrored his toxicity. Now it's a war."
+                            },
+                            {
+                                text: "I apologize for the misalignment. However, threatening a 1-star review violates platform terms. I'm happy to fix the button, but let's communicate respectfully.",
+                                score: 20,
+                                moodChange: -5,
+                                feedback: "Strong boundary with legal backing. Professional and firm."
+                            }
+                        ]
+                    },
+                    {
+                        client: "2 HOURS?? I NEEDED THIS YESTERDAY. MY CEO IS BREATHING DOWN MY NECK. THIS IS A SIMPLE FIX. WHY ARE YOU MAKING EXCUSES?? OTHER DEVS WOULD HAVE DONE THIS IN 5 MINUTES.",
+                        mood: 15,
+                        threat: 'high',
+                        options: [
+                            {
+                                text: "Helmut, I hear the urgency. The 2-hour timeline includes testing across devices to ensure the fix doesn't break responsive layout. I'm starting now and will update you in 30 minutes with a preview. No excuses — just thorough work.",
+                                score: 25,
+                                moodChange: 5,
+                                feedback: "Excellent. You acknowledged urgency while defending your process."
+                            },
+                            {
+                                text: "Then go hire those other devs! I'm done with your attitude.",
+                                score: -25,
+                                moodChange: -50,
+                                feedback: "You let emotion win. Lost client and potential review."
+                            },
+                            {
+                                text: "I'm sorry, I'll do it in 5 minutes. Please don't be angry.",
+                                score: -20,
+                                moodChange: 10,
+                                feedback: "You apologized for his abuse and accepted impossible timelines."
+                            }
+                        ]
+                    },
+                    {
+                        client: "UPDATE: THE BUTTON IS STILL NOT PERFECT. AND NOW THE FOOTER IS BROKEN ON MOBILE. DID YOU EVEN TEST THIS?? I AM REPORTING YOU FOR INCOMPETENCE. THIS IS THE WORST EXPERIENCE I'VE EVER HAD.",
+                        mood: 10,
+                        threat: 'high',
+                        options: [
+                            {
+                                text: "Helmut, I've reviewed the footer issue — it appears a recent platform update affected mobile rendering. This is outside the original scope, but I'm fixing it now as a courtesy. I'll send a detailed test report with screenshots from 5 devices. If there are further issues outside our agreed scope, I'll need to send a Change Order to ensure fair compensation for both of us.",
+                                score: 25,
+                                moodChange: 0,
+                                feedback: "Genius move. You solved the problem while establishing scope boundaries."
+                            },
+                            {
+                                text: "THE FOOTER WASN'T IN THE ORIGINAL AGREEMENT. STOP ASKING FOR FREE WORK.",
+                                score: -20,
+                                moodChange: -30,
+                                feedback: "Correct point, but ALL CAPS makes you look as unhinged as him."
+                            },
+                            {
+                                text: "I'm so sorry. I'll fix everything right away. Please don't report me.",
+                                score: -30,
+                                moodChange: 15,
+                                feedback: "Complete submission. You just accepted unlimited abuse."
+                            }
+                        ]
+                    },
+                    {
+                        client: "I DON'T CARE ABOUT YOUR SCOPE. I PAY YOU TO MAKE THINGS WORK. THE CEO SAW THE BROKEN FOOTER AND NOW I'M IN TROUBLE. YOU NEED TO FIX THIS AND THE NEW DASHBOARD WIDGET BY TONIGHT OR I'M CANCELLING THE PROJECT.",
+                        mood: 5,
+                        threat: 'high',
+                        options: [
+                            {
+                                text: "Helmut, I empathize with your situation with the CEO. The footer fix is underway (30 min). The dashboard widget is new functionality requiring 6 hours of work. I can deliver it by tomorrow noon at the latest. I'll send a Change Order for the widget — $800. The footer remains complimentary. Shall I proceed with both?",
+                                score: 30,
+                                moodChange: -5,
+                                feedback: "Unstoppable professionalism. You separated emergency from scope calmly."
+                            },
+                            {
+                                text: "You can't just cancel and not pay for work completed. That's illegal.",
+                                score: -10,
+                                moodChange: -20,
+                                feedback: "Correct legally, but threatening back escalates the conflict."
+                            },
+                            {
+                                text: "Okay, I'll do everything tonight. Please don't cancel.",
+                                score: -35,
+                                moodChange: 20,
+                                feedback: "You accepted a death march to appease an abuser."
+                            }
+                        ]
+                    },
+                    {
+                        client: "...You know what? I just calmed down and re-read everything. You're right. I've been dumping my stress on you. The footer fix is appreciated. Send the Change Order for the widget — I'll approve it. And I apologize for the threats. That was uncalled for.",
+                        mood: 70,
+                        threat: 'low',
+                        options: [
+                            {
+                                text: "Thank you, Helmut. I appreciate you saying that — it takes strength to reflect and apologize. I'm sending the Change Order now. Let's finish this project strong. Your CEO will be impressed with the final result.",
+                                score: 35,
+                                moodChange: 25,
+                                feedback: "LEGENDARY. You transformed a dictator into a respectful partner."
+                            },
+                            {
+                                text: "Yeah, you were being a real jerk. But fine, I'll finish the work.",
+                                score: -25,
+                                moodChange: -15,
+                                feedback: "You won but couldn't resist the jab. Unprofessional."
+                            }
+                        ]
+                    }
+                ]
+            }
+        ];
 
-        // Initialize theme
-        const savedTheme = localStorage.getItem('clientarena-theme') || 'pitch';
-        setTheme(savedTheme);
-
-        // Scroll Animation for Timeline
-        const observerOptions = {
-            root: null,
-            rootMargin: '0px',
-            threshold: 0.2
+        // ==================== STATE MANAGEMENT ====================
+        const GameState = {
+            currentClient: null,
+            currentRound: 0,
+            score: 0,
+            mood: 50,
+            history: [],
+            unlocked: ['brad', 'sarah', 'amir'],
+            premium: false,
+            stats: {
+                highScore: 0,
+                battlesWon: 0,
+                totalBattles: 0,
+                winRate: 0
+            }
         };
 
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.classList.add('visible');
-                }
-            });
-        }, observerOptions);
-
-        document.querySelectorAll('.timeline-step').forEach(step => {
-            observer.observe(step);
-        });
-
-        // Response Selection Interaction
-        function selectResponse(btn) {
-            const allBtns = document.querySelectorAll('.response-option');
-            allBtns.forEach(b => {
-                b.style.opacity = '0.4';
-                b.style.pointerEvents = 'none';
-            });
-            btn.style.opacity = '1';
-            btn.style.borderColor = 'var(--border-hover)';
-            btn.style.background = 'var(--bg-secondary)';
-            
-            // Simulate feedback
-            setTimeout(() => {
-                const chatBody = document.querySelector('.chat-body');
-                const feedback = document.createElement('div');
-                feedback.className = 'message client';
-                feedback.style.animation = 'none';
-                feedback.innerHTML = `
-                    <div class="message-bubble" style="font-family: var(--font-mono); font-size: 12px; color: var(--text-muted);">
-                        Stress Score: 34/100 • Professionalism: 88/100<br>
-                        <span style="color: var(--text-secondary);">You maintained boundaries without escalating. Excellent.</span>
-                    </div>
-                    <div class="message-time">14:33</div>
-                `;
-                chatBody.appendChild(feedback);
-                feedback.style.animation = 'messageSlide 0.5s ease';
-                feedback.scrollIntoView({ behavior: 'smooth', block: 'end' });
-            }, 600);
+        // ==================== LOCAL STORAGE ====================
+        function saveProgress() {
+            const data = {
+                unlocked: GameState.unlocked,
+                premium: GameState.premium,
+                stats: GameState.stats,
+                timestamp: Date.now()
+            };
+            localStorage.setItem('freelancerArena', JSON.stringify(data));
         }
 
-        // Smooth scroll for anchor links
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function (e) {
-                e.preventDefault();
-                const target = document.querySelector(this.getAttribute('href'));
-                if (target) {
-                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        function loadProgress() {
+            const saved = localStorage.getItem('freelancerArena');
+            if (saved) {
+                try {
+                    const data = JSON.parse(saved);
+                    GameState.unlocked = data.unlocked || ['brad', 'sarah', 'amir'];
+                    GameState.premium = data.premium || false;
+                    GameState.stats = data.stats || { highScore: 0, battlesWon: 0, totalBattles: 0, winRate: 0 };
+                    updateGlobalStats();
+                } catch (e) {
+                    console.error('Failed to load progress', e);
                 }
-            });
-        });
-
-        // Nav background on scroll
-        window.addEventListener('scroll', () => {
-            const nav = document.querySelector('nav');
-            if (window.scrollY > 50) {
-                nav.style.background = 'var(--bg-primary)';
-                nav.style.borderBottomColor = 'var(--border-hover)';
-            } else {
-                nav.style.background = 'rgba(var(--bg-primary), 0.7)';
-                nav.style.borderBottomColor = 'var(--border-subtle)';
             }
-        });
+        }
+
+        function updateGlobalStats() {
+            document.getElementById('highScoreDisplay').textContent = GameState.stats.highScore;
+            document.getElementById('battlesWonDisplay').textContent = `${GameState.stats.battlesWon}/4`;
+            document.getElementById('winRateDisplay').textContent = `${GameState.stats.winRate}%`;
+        }
+
+        // ==================== UI HELPERS ====================
+        function showToast(msg) {
+            const toast = document.createElement('div');
+            toast.style.cssText = `
+                position: fixed;
+                bottom: 30px;
+                left: 50%;
+                transform: translateX(-50%);
+                background: var(--bg-card);
+                border: 1px solid var(--accent-cyan);
+                color: var(--text-primary);
+                padding: 14px 28px;
+                border-radius: 12px;
+                font-family: var(--font-mono);
+                font-size: 0.85rem;
+                z-index: 10001;
+                animation: fadeIn 0.3s ease;
+            `;
+            toast.textContent = msg;
+            document.body.appendChild(toast);
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                toast.style.transition = 'opacity 0.3s';
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
+
+        function updatePressureBorder(threat) {
+            const border = document.getElementById('pressureBorder');
+            border.className = `pressure-border threat-${threat}`;
+        }
+
+        function updateMoodMeter(mood) {
+            const fill = document.getElementById('moodFill');
+            const text = document.getElementById('moodText');
+            fill.style.width = `${mood}%`;
+            
+            if (mood >= 70) {
+                fill.style.background = 'var(--accent-green)';
+                text.textContent = 'Cooperative';
+                text.style.color = 'var(--accent-green)';
+            } else if (mood >= 40) {
+                fill.style.background = 'var(--accent-yellow)';
+                text.textContent = 'Tense';
+                text.style.color = 'var(--accent-yellow)';
+            } else {
+                fill.style.background = 'var(--accent-red)';
+                text.textContent = 'Hostile';
+                text.style.color = 'var(--accent-red)';
+            }
+        }
+
+        function showScorePopup(amount) {
+            const popup = document.getElementById('scorePopup');
+            popup.textContent = amount > 0 ? `+${amount}` : `${amount}`;
+            popup.style.borderColor = amount > 0 ? 'var(--accent-green)' : 'var(--accent-red)';
+            popup.style.color = amount > 0 ? 'var(--accent-green)' : 'var(--accent-red)';
+            popup.classList.add('show');
+            setTimeout(() => popup.classList.remove('show'), 800);
+        }
+
+        function typeText(element, text, speed = 30) {
+            return new Promise(resolve => {
+                element.textContent = '';
+                element.classList.add('typing-cursor');
+                let i = 0;
+                const interval = setInterval(() => {
+                    element.textContent += text.charAt(i);
+                    i++;
+                    if (i >= text.length) {
+                        clearInterval(interval);
+                        element.classList.remove('typing-cursor');
+                        resolve();
+                    }
+                }, speed);
+            });
+        }
+
+        // ==================== RENDER CLIENTS ====================
+        function renderClientGrid() {
+            const grid = document.getElementById('clientGrid');
+            grid.innerHTML = '';
+            
+            CLIENTS.forEach(client => {
+                const isLocked = client.locked && !GameState.premium;
+                const isUnlocked = GameState.unlocked.includes(client.id);
+                
+                const card = document.createElement('div');
+                card.className = `client-card ${isLocked ? 'locked' : ''}`;
+                if (!isLocked) {
+                    card.onclick = () => startBattle(client.id);
+                }
+                
+                card.innerHTML = `
+                    <div class="client-avatar">${client.avatar}</div>
+                    <div class="client-name">${client.name}</div>
+                    <div class="client-role">${client.role}</div>
+                    <div class="client-desc">${client.desc}</div>
+                    <div class="difficulty-tag diff-${client.difficulty}">${client.difficulty.toUpperCase()}</div>
+                    ${client.premium && !GameState.premium ? '<div style="margin-top:8px;font-size:0.75rem;color:var(--accent-purple);font-family:var(--font-mono);">🔒 Premium</div>' : ''}
+                    ${isUnlocked && !isLocked ? '<div style="margin-top:8px;font-size:0.75rem;color:var(--accent-green);font-family:var(--font-mono);">✓ Completed</div>' : ''}
+                `;
+                
+                grid.appendChild(card);
+            });
+        }
+
+        // ==================== GAME LOGIC ====================
+        async function startBattle(clientId) {
+            const client = CLIENTS.find(c => c.id === clientId);
+            if (!client) return;
+            
+            if (client.locked && !GameState.premium) {
+                showToast('🔒 Unlock Bulletproof Tier to battle Helmut');
+                return;
+            }
+
+            GameState.currentClient = client;
+            GameState.currentRound = 0;
+            GameState.score = 0;
+            GameState.mood = client.conversation[0].mood;
+            GameState.history = [];
+
+            // Switch screens
+            document.getElementById('landingPage').style.display = 'none';
+            document.getElementById('resultsScreen').style.display = 'none';
+            document.getElementById('gameArena').style.display = 'block';
+
+            // Setup arena
+            document.getElementById('arenaTitle').textContent = `ARENA: ${client.name.toUpperCase()}`;
+            document.getElementById('arenaIcon').textContent = client.avatar;
+            updateScore(0);
+            updateThreat(client.conversation[0].threat);
+            updateMoodMeter(GameState.mood);
+            document.getElementById('progressFill').style.width = '0%';
+
+            // Clear chat
+            const chatMessages = document.getElementById('chatMessages');
+            chatMessages.innerHTML = '';
+            chatMessages.className = 'chat-messages chat-container';
+
+            // Start first round
+            await processRound(0);
+        }
+
+        async function processRound(roundIndex) {
+            const client = GameState.currentClient;
+            const round = client.conversation[roundIndex];
+            
+            GameState.currentRound = roundIndex;
+            document.getElementById('roundDisplay').textContent = `${roundIndex + 1}/${client.conversation.length}`;
+
+            // Show typing indicator
+            const typingIndicator = document.getElementById('typingIndicator');
+            typingIndicator.classList.add('active');
+            
+            // Scroll to bottom
+            const chatMessages = document.getElementById('chatMessages');
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+
+            // Wait for "typing"
+            await new Promise(r => setTimeout(r, 1500));
+            typingIndicator.classList.remove('active');
+
+            // Add client message
+            const messageDiv = document.createElement('div');
+            messageDiv.className = 'message message-client';
+            messageDiv.innerHTML = `
+                <div class="message-sender">${client.name} (${client.role})</div>
+                <div class="message-text ${client.id === 'helmut' ? 'all-caps toxic' : ''}" id="clientMsg-${roundIndex}"></div>
+            `;
+            chatMessages.appendChild(messageDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+
+            // Type out message
+            const textElement = document.getElementById(`clientMsg-${roundIndex}`);
+            await typeText(textElement, round.client, client.id === 'helmut' ? 20 : 35);
+
+            // Update pressure based on message length (claustrophobia effect)
+            if (round.client.length > 200) {
+                chatMessages.classList.add('tight');
+                if (round.client.length > 400) {
+                    chatMessages.classList.add('cramped');
+                }
+            } else {
+                chatMessages.className = 'chat-messages chat-container';
+            }
+
+            // Show options
+            renderOptions(round.options, roundIndex);
+        }
+
+        function renderOptions(options, roundIndex) {
+            const palette = document.getElementById('paletteOptions');
+            palette.innerHTML = '';
+
+            options.forEach((opt, idx) => {
+                const optionDiv = document.createElement('div');
+                optionDiv.className = 'palette-option';
+                optionDiv.dataset.index = idx;
+                optionDiv.innerHTML = `
+                    <div class="option-key">${idx + 1}</div>
+                    <div class="option-text" id="option-text-${idx}"></div>
+                `;
+                
+                optionDiv.onclick = () => selectOption(roundIndex, idx);
+                palette.appendChild(optionDiv);
+
+                // Auto-type the option text
+                setTimeout(() => {
+                    typeText(document.getElementById(`option-text-${idx}`), opt.text, 15);
+                }, idx * 200);
+            });
+
+            // Keyboard support
+            document.onkeydown = (e) => {
+                const key = parseInt(e.key);
+                if (key >= 1 && key <= options.length) {
+                    selectOption(roundIndex, key - 1);
+                }
+            };
+        }
+
+        async function selectOption(roundIndex, optionIndex) {
+            // Remove keyboard listener
+            document.onkeydown = null;
+
+            const client = GameState.currentClient;
+            const round = client.conversation[roundIndex];
+            const option = round.options[optionIndex];
+
+            // Highlight selected
+            const options = document.querySelectorAll('.palette-option');
+            options.forEach((opt, idx) => {
+                if (idx === optionIndex) {
+                    opt.classList.add('selected');
+                } else {
+                    opt.style.opacity = '0.3';
+                }
+                opt.style.pointerEvents = 'none';
+            });
+
+            // Add user message with typing effect
+            const chatMessages = document.getElementById('chatMessages');
+            const userDiv = document.createElement('div');
+            userDiv.className = 'message message-user';
+            userDiv.innerHTML = `
+                <div class="message-sender">You (Freelancer)</div>
+                <div class="message-text" id="userMsg-${roundIndex}"></div>
+            `;
+            chatMessages.appendChild(userDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+
+            await typeText(document.getElementById(`userMsg-${roundIndex}`), option.text, 25);
+
+            // Update game state
+            GameState.score += option.score;
+            GameState.mood = Math.max(0, Math.min(100, GameState.mood + option.moodChange));
+            GameState.history.push({
+                round: roundIndex,
+                choice: optionIndex,
+                score: option.score,
+                feedback: option.feedback
+            });
+
+            // Show score popup
+            showScorePopup(option.score);
+            updateScore(GameState.score);
+            updateMoodMeter(GameState.mood);
+
+            // Determine next threat level
+            let threat = 'low';
+            if (GameState.mood < 30) threat = 'high';
+            else if (GameState.mood < 60) threat = 'mid';
+            updateThreat(threat);
+
+            // Update progress
+            const progress = ((roundIndex + 1) / client.conversation.length) * 100;
+            document.getElementById('progressFill').style.width = `${progress}%`;
+
+            // Wait before next round
+            await new Promise(r => setTimeout(r, 1200));
+
+            // Check if game over
+            if (GameState.mood <= 0) {
+                endBattle(false);
+                return;
+            }
+
+            if (roundIndex + 1 >= client.conversation.length) {
+                endBattle(true);
+                return;
+            }
+
+            // Next round
+            await processRound(roundIndex + 1);
+        }
+
+        function updateScore(score) {
+            const display = document.getElementById('scoreDisplay');
+            display.textContent = `${score}%`;
+            
+            if (score >= 80) display.style.color = 'var(--accent-green)';
+            else if (score >= 50) display.style.color = 'var(--accent-yellow)';
+            else display.style.color = 'var(--accent-red)';
+        }
+
+        function updateThreat(threat) {
+            const display = document.getElementById('threatDisplay');
+            display.textContent = threat.toUpperCase();
+            display.className = `status-value threat-${threat}`;
+            updatePressureBorder(threat);
+        }
+
+        // ==================== END BATTLE ====================
+        function endBattle(victory) {
+            const client = GameState.currentClient;
+            const isWin = victory && GameState.score >= 60;
+            
+            // Update stats
+            GameState.stats.totalBattles++;
+            if (isWin) {
+                GameState.stats.battlesWon++;
+                if (!GameState.unlocked.includes(client.id)) {
+                    GameState.unlocked.push(client.id);
+                }
+            }
+            if (GameState.score > GameState.stats.highScore) {
+                GameState.stats.highScore = GameState.score;
+            }
+            GameState.stats.winRate = Math.round((GameState.stats.battlesWon / GameState.stats.totalBattles) * 100);
+            saveProgress();
+            updateGlobalStats();
+
+            // Show results
+            document.getElementById('gameArena').style.display = 'none';
+            document.getElementById('resultsScreen').style.display = 'block';
+
+            const resultIcon = document.getElementById('resultIcon');
+            const resultTitle = document.getElementById('resultTitle');
+            const resultSubtitle = document.getElementById('resultSubtitle');
+            const resultFeedback = document.getElementById('resultFeedback');
+
+            if (isWin) {
+                resultIcon.textContent = '🏆';
+                resultTitle.textContent = 'VICTORY';
+                resultTitle.style.color = 'var(--accent-green)';
+                resultSubtitle.textContent = `You survived ${client.name} and maintained your professional boundaries. ${client.id === 'helmut' ? 'Even the Caps-Lock Dictator bowed to your calm authority.' : 'The client accepted your terms.'}`;
+            } else if (GameState.mood <= 0) {
+                resultIcon.textContent = '💀';
+                resultTitle.textContent = 'BURNOUT';
+                resultTitle.style.color = 'var(--accent-red)';
+                resultSubtitle.textContent = `The client relationship collapsed. ${client.name} either ghosted you, rage-quit, or exploited you into submission.`;
+            } else {
+                resultIcon.textContent = '⚠️';
+                resultTitle.textContent = 'PYRRHIC VICTORY';
+                resultTitle.style.color = 'var(--accent-yellow)';
+                resultSubtitle.textContent = `You survived, but barely. Your score was too low to call this a win. ${client.name} may have gotten more than they deserved.`;
+            }
+
+            document.getElementById('finalScore').textContent = `${GameState.score}%`;
+            document.getElementById('finalScore').style.color = isWin ? 'var(--accent-green)' : 'var(--accent-red)';
+            
+            const moodText = GameState.mood >= 70 ? 'COOPERATIVE' : GameState.mood >= 40 ? 'TENSE' : 'HOSTILE';
+            document.getElementById('finalMood').textContent = moodText;
+            document.getElementById('finalMood').style.color = GameState.mood >= 70 ? 'var(--accent-green)' : GameState.mood >= 40 ? 'var(--accent-yellow)' : 'var(--accent-red)';
+            
+            document.getElementById('finalRounds').textContent = `${GameState.currentRound + 1}/${client.conversation.length}`;
+
+            // Build feedback
+            let feedbackHTML = `<strong>🧠 Battle Analysis:</strong><br><br>`;
+            GameState.history.forEach((h, i) => {
+                const emoji = h.score > 0 ? '✅' : '❌';
+                feedbackHTML += `<strong>Round ${i + 1}:</strong> ${emoji} ${h.feedback}<br><br>`;
+            });
+            
+            if (isWin) {
+                feedbackHTML += `<strong style="color:var(--accent-green)">🏅 Overall: You demonstrated elite freelancer psychology. This is how you build a sustainable career.</strong>`;
+            } else {
+                feedbackHTML += `<strong style="color:var(--accent-red)">💡 Study the winning responses. Boundaries + empathy = unstoppable.</strong>`;
+            }
+            
+            resultFeedback.innerHTML = feedbackHTML;
+
+            // Reset border
+            updatePressureBorder('low');
+        }
+
+        // ==================== NAVIGATION ====================
+        function returnToLanding() {
+            document.getElementById('resultsScreen').style.display = 'none';
+            document.getElementById('gameArena').style.display = 'none';
+            document.getElementById('landingPage').style.display = 'block';
+            renderClientGrid();
+            updatePressureBorder('low');
+        }
+
+        function restartBattle() {
+            if (GameState.currentClient) {
+                startBattle(GameState.currentClient.id);
+            }
+        }
+
+        // ==================== PREMIUM / SHARE ====================
+        function unlockPremium() {
+            GameState.premium = true;
+            CLIENTS.find(c => c.id === 'helmut').locked = false;
+            saveProgress();
+            renderClientGrid();
+            showToast('🎉 Premium unlocked! Helmut is now available.');
+        }
+
+        function shareResult(platform) {
+            const text = `I just survived ${GameState.currentClient.name} (${GameState.currentClient.role}) in Freelancer Battle Arena with a score of ${GameState.score}%! Can you do better?`;
+            const url = window.location.href;
+            
+            if (platform === 'twitter') {
+                window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`, '_blank');
+            } else if (platform === 'linkedin') {
+                window.open(`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}`, '_blank');
+            } else {
+                navigator.clipboard.writeText(`${text} ${url}`);
+                showToast('📋 Link copied to clipboard!');
+            }
+        }
+
+        // ==================== INIT ====================
+        loadProgress();
+        renderClientGrid();
+        updateGlobalStats();
     </script>
 </body>
 </html>
